@@ -1,0 +1,64 @@
+!pip install openai==0.27.0
+import openai
+
+import os
+
+# Configura tu clave API de OpenAI
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
+
+# Lista para almacenar el historial de mensajes
+historial = []
+
+
+def obtener_respuesta(mensaje, historial):
+    # Agregar el mensaje del usuario al historial
+    historial.append({"role": "user", "content": mensaje})
+
+
+    try:
+        respuesta = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=historial
+        )
+        # Obtener la respuesta del asistente y añadirla al historial
+        mensaje_asistente = respuesta.choices[0].message['content']
+        historial.append({"role": "assistant", "content": mensaje_asistente})
+        return mensaje_asistente
+    except Exception as e:
+        return f"Hubo un error: {str(e)}"
+
+
+# Bucle para hacer varias preguntas
+while True:
+    mensaje = input("Escribe tu pregunta (o escribe 'salir' para terminar): ")
+
+
+    if mensaje.lower() == "salir":
+        print("Conversación terminada.")
+        break
+
+
+    respuesta = obtener_respuesta(mensaje, historial)
+    print("Respuesta del LLM:", respuesta)
+
+
+# Mostrar el historial al final
+print("\nHistorial de la conversación:")
+for i, intercambio in enumerate(historial, 1):
+    if intercambio['role'] == "user":
+        print(f"{i}. Pregunta: {intercambio['content']}")
+    else:
+        print(f"   Respuesta: {intercambio['content']}")
+
+
+# Opcional: Guardar el historial en un archivo de texto
+with open("historial_conversacion.txt", "w") as file:
+    for intercambio in historial:
+        if intercambio['role'] == "user":
+            file.write(f"Pregunta: {intercambio['content']}\n")
+        else:
+            file.write(f"Respuesta: {intercambio['content']}\n")
+        file.write("\n")
+
+

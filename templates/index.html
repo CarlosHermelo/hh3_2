@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot GPT-4</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-content">
+            {% for intercambio in historial %}
+                {% if intercambio.role == "user" %}
+                <div class="user-message">
+                    <p><strong>Tú:</strong> {{ intercambio.content }}</p>
+                </div>
+                {% else %}
+                <div class="assistant-message">
+                    <p><strong>Asistente:</strong> {{ intercambio.content }}</p>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="chat-footer">
+            <form method="POST">
+                <input type="text" id="mensaje" name="mensaje" placeholder="Envía un mensaje a ChatGPT" required>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
